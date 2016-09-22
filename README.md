@@ -8,8 +8,8 @@ MobiReader.exe <FileName>
 ```
 
 ## Keys
-Page Down, Down arrow, or Right arrow - Pages forward
-Page Up, Left arrow, or Up arrow  - Pages backword
-Ctrl+F - Find/Search
-Escape - Quit
+- Page Down, Down arrow, or Right arrow - Pages forward
+- Page Up, Left arrow, or Up arrow  - Pages backword
+- Ctrl+F - Find/Search
+- Escape - Quit
 
