@@ -55,7 +55,6 @@ namespace MobiReader
 		public new static MobiFile LoadFile (String fileName)
 		{
 			MobiFile retval = new MobiFile (PalmFile.LoadFile (fileName));
-
 			List<Byte> empty2 = new List<Byte> ();
 			List<Byte> temp = new List<Byte> ();
 			empty2.Add (0);
@@ -75,7 +74,7 @@ namespace MobiReader
 				while (a < retval.m_TextRecordCount + 1) {
 					StringBuilder blockbuilder = new StringBuilder ();
 					datatemp = new List<byte> (retval.m_RecordList [a++].Data);
-					datatemp.Add (32);
+
 					pos = 0;
 					List<Byte> temps = new List<Byte> ();
 
@@ -103,13 +102,17 @@ namespace MobiReader
 							temps.Add (0);
 							Byte bb = (Byte)((ab & 63));  // do this to drop the first 2 bits
 							temps.Add (bb);
-							temps.Add (datatemp [pos++]);
+							if (pos < datatemp.Count) {
+								temps.Add (datatemp [pos++]);
+							} else {
+								temps.Add (32);
+							}
 				
 							UInt32 b = BytesToUint (temps.ToArray ());
 							UInt32 dist = (b >> 3);
 							UInt32 len = (b << 29) >> 29;
 							Int32 uncompressedpos = blockbuilder.ToString ().Length - ((Int32)dist);
-							for (uint i = 0; i < len + 3; i++) { //&& uncompressedpos < blockbuilder.ToString().Length
+							for (uint i = 0; i < len + 3; i++) { 
 								try {
 									blockbuilder.Append ((char)blockbuilder.ToString () [uncompressedpos++]);
 								} catch (Exception) {

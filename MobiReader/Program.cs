@@ -23,7 +23,7 @@ namespace MobiReader
 				Console.Out.WriteLine (e.Message);
 				return;
 			}
-
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
 			ConsoleReader cr = new ConsoleReader (mf);
 			Console.Out.Write (cr.GetLines ());
 			ConsoleKeyInfo cki = Console.ReadKey ();
