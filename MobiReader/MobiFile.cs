@@ -72,19 +72,19 @@ namespace MobiReader
 				Int32 a = 1;
 				List<Byte> datatemp = null;
 				while (a < retval.m_TextRecordCount + 1) {
-					StringBuilder blockbuilder = new StringBuilder ();
+					List<Byte> blockbuilder = new List<Byte> ();
 					datatemp = new List<byte> (retval.m_RecordList [a++].Data);
-
+					datatemp.Add (0);
 					pos = 0;
 					List<Byte> temps = new List<Byte> ();
 
-					while (pos < datatemp.Count && blockbuilder.ToString ().Length < 4096) {
+					while (pos < datatemp.Count && blockbuilder.Count < 4096) {
 
-						Byte ab = datatemp [pos++];
+						Byte ab = (byte)(datatemp[pos++] );
 						if (ab == 0x00 || (ab > 0x08 && ab <= 0x7f)) {
-							blockbuilder.Append ((char)ab);
+							blockbuilder.Add (ab);
+							//blockbuilder.Add (0);
 						} else if (ab > 0x00 && ab <= 0x08) {
-                            
 							temps.Clear ();
 							temps.Add (0);
 							temps.Add (0);
@@ -92,8 +92,11 @@ namespace MobiReader
 							temps.Add (ab);
 							UInt32 value = BytesToUint (temps.ToArray ());
 							for (uint i = 0; i < value; i++) {
-								blockbuilder.Append ((char)datatemp [pos++]);
+								blockbuilder.Add((byte)(datatemp [pos++] ));
+							//	blockbuilder.Add (0);
 							}
+
+
                             
 						} else if (ab > 0x7f && ab <= 0xbf) {
                           
@@ -103,31 +106,34 @@ namespace MobiReader
 							Byte bb = (Byte)((ab & 63));  // do this to drop the first 2 bits
 							temps.Add (bb);
 							if (pos < datatemp.Count) {
-								temps.Add (datatemp [pos++]);
+								temps.Add ((byte)(datatemp [pos++] ));
 							} else {
-								temps.Add (32);
+								temps.Add (0);
 							}
 				
 							UInt32 b = BytesToUint (temps.ToArray ());
-							UInt32 dist = (b >> 3);
-							UInt32 len = (b << 29) >> 29;
-							Int32 uncompressedpos = blockbuilder.ToString ().Length - ((Int32)dist);
-							for (uint i = 0; i < len + 3; i++) { 
+							UInt32 dist = (b >> 3)*1;
+							UInt32 len = ((b << 29) >> 29);
+							Int32 uncompressedpos = blockbuilder.Count - ((Int32)dist);
+							for (int i = 0; i < (len + 3)*1; i++) { 
 								try {
-									blockbuilder.Append ((char)blockbuilder.ToString () [uncompressedpos++]);
+									blockbuilder.Add(blockbuilder[uncompressedpos + i]);
 								} catch (Exception) {
 								}
 							}
 							
                            
 						} else if (ab > 0xbf && ab <= 0xff) {
-							blockbuilder.Append ((char)32);
-							blockbuilder.Append ((char)(ab ^ 0x80));
+							blockbuilder.Add (32);
+							//blockbuilder.Add (0);
+							blockbuilder.Add((byte)(ab ^ 0x80));
+							//blockbuilder.Add (0);
 						}
 					}
-					sb.Append (blockbuilder.ToString ());
+
+					sb.Append (Encoding.UTF8.GetString(blockbuilder.ToArray()));
 				}
-				retval.m_BookText = sb.ToString ().Substring (0, (int)retval.TextLength);
+				retval.m_BookText = sb.ToString ();
 
 			} else if (retval.Compression == 17480) {
 				temp.Clear ();
