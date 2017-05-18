@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/hartalex/mobireader.svg?branch=master)](https://travis-ci.org/hartalex/mobireader)
 # MobiReader
 
 This is a C# app for reading mobi formatted ebooks in a console window.
@@ -12,4 +13,3 @@ MobiReader.exe <FileName>
 - Page Up, Left arrow, or Up arrow  - Pages backword
 - Ctrl+F - Find/Search
 - Escape - Quit
-
